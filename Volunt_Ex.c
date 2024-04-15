@@ -58,13 +58,13 @@ int main(){
     return 0; 
     }
 
-char* toLowerCase(char *str) {
-    int length = strlen(str);
-    char *lowerStr = malloc(length + 1); // Allocate memory for the lowercase string
-    for (int i = 0; i < length; i++) {
+char* toLowerCase(char *str) { // 'char*' returns a pointer to a character which represents the lowercase version of the input string 
+    int length = strlen(str); //calculates length 
+    char *lowerStr = malloc(length + 1); // dynamically allocate memory for the lowercase string ( the +1 ensures that theres enough space for the null terminator
+    for (int i = 0; i < length; i++) { // this loop iterates over each character. for each character toLower is called. The lowercase character is then assigned to the corresponding position in the Lowerstr array
         lowerStr[i] = tolower(str[i]); // Convert each character to lowercase
     }
-    lowerStr[length] = '\0'; // Null-terminate the string
+    lowerStr[length] = '\0'; // Null-terminate the string . signifies end of the string
     return lowerStr;
 }
 
