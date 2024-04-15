@@ -40,6 +40,7 @@ int main(){
     printf("Choose mode (save or read)");
     scanf("%s", mode);
 
+    char* lowerMode = toLowerCase(mode)
     
     if (strcmp(lowerMode, "save") == 0 || strcmp(lowerMode,"s")==0){ // if user chooses save it creaters a databasemanger instance, sets its filename and calls the savenewentry function with the address of the next available entry in the 'entries' array and the address of the dbManager instance
         DatabaseManager dbManager; // instance
@@ -76,7 +77,7 @@ void saveNewEntry(MovieEntry *entry, DatabaseManager *dbManager) {
 
     printf("Enter author: ");
     scanf(" %[^\n]s", entry->author);
-    getchar(); 
+    getchar(); // read and discard the newline character (clear input buffer)
 
     printf("Enter duration/number of pages: ");
     scanf(" %[^\n]s", entry->duration);
