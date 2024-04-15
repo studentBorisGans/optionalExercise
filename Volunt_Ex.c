@@ -32,31 +32,36 @@ void printEntry(MovieEntry *entry);
 char* toLowerCase(char *str);
 
 int main(){
-    MovieEntry entries[MAX_ENTRIES];
-    int numEntries = 0;
-    char mode[MAX_CHAR]; // variale to store the mode cchosen by the user
+    printf("\nWelcome to the Database Manager!\n");
+    bool cont = true;
+    while (cont) {
+        MovieEntry entries[MAX_ENTRIES];
+        int numEntries = 0;
 
-    printf("Welcome to the Database Manager!\n");
-    printf("Choose mode (save or read): ");
-    scanf("%s", mode);
+        char mode[MAX_CHAR]; // variale to store the mode cchosen by the user
 
-    char* lowerMode = toLowerCase(mode);
+        printf("Choose a mode (save or read) or exit\nPossible options:\nSave, save, S, s\nRead, read, R, r\nExit, exit, E, e\n");
+        scanf("%s", mode);
+
+        char* lowerMode = toLowerCase(mode);
     
-    if (strcmp(lowerMode, "save") == 0 || strcmp(lowerMode,"s")==0){ // if user chooses save it creaters a databasemanger instance, sets its filename and calls the savenewentry function with the address of the next available entry in the 'entries' array and the address of the dbManager instance
-        DatabaseManager dbManager; // instance
-        strcpy(dbManager.filename, "Movie_data.csv");
-        saveNewEntry(&entries[numEntries], &dbManager); // call function to save new entry
-    } else if (strcmp(lowerMode, "read") == 0 || strcmp(lowerMode,"r")==0){ // if user chooses read also creates databasemanger instance and calls the load entries function to load existing entries into the entries array and increments numentries. 
-        DatabaseManager dbManager;
-        strcpy(dbManager.filename, "Movie_data.csv");
-        loadEntries(entries, &numEntries, &dbManager); // load existing entries
-        searchEntries(entries, numEntries); // call function to search and display entries
-    } else {
-        printf("invalid mode!\n");
-        return 1;
+        if (strcmp(lowerMode, "save") == 0 || strcmp(lowerMode,"s")==0){ // if user chooses save it creaters a databasemanger instance, sets its filename and calls the savenewentry function with the address of the next available entry in the 'entries' array and the address of the dbManager instance
+            DatabaseManager dbManager; // instance
+            strcpy(dbManager.filename, "Movie_data.csv");
+            saveNewEntry(&entries[numEntries], &dbManager, numEntries); // call function to save new entry
+        } else if (strcmp(lowerMode, "read") == 0 || strcmp(lowerMode,"r")==0){ // if user chooses read also creates databasemanger instance and calls the load entries function to load existing entries into the entries array and increments numentries. 
+            DatabaseManager dbManager;
+            strcpy(dbManager.filename, "Movie_data.csv");
+            loadEntries(entries, &numEntries, &dbManager); // load existing entries
+            searchEntries(entries, numEntries); // call function to search and display entries
+        } else if (strcmp(lowerMode, "exit") == 0 || strcmp(lowerMode, "e") ==0) {
+            cont = false;
+        } else {
+            printf("Invalid mode! Please try again :)\n\n");
+        } 
     }
-    return 0; 
-    }
+    return 0;
+}
 
 char* toLowerCase(char *str) { // 'char*' returns a pointer to a character which represents the lowercase version of the input string 
     int length = strlen(str); //calculates length 
@@ -70,7 +75,7 @@ char* toLowerCase(char *str) { // 'char*' returns a pointer to a character which
 
 // This is the function definition for saving a new entry to the data base
 // it takes a pointer to a 'MovieEntry' structure representing the new entry and a pointer to a 'DatabaseManager' structure
-void saveNewEntry(MovieEntry *entry, DatabaseManager *dbManager) {
+void saveNewEntry(MovieEntry *entry, DatabaseManager *dbManager, int numEntries) {
     printf("Enter title: ");
     scanf(" %[^\n]s", entry->title); 
     getchar(); 
@@ -99,12 +104,12 @@ void saveNewEntry(MovieEntry *entry, DatabaseManager *dbManager) {
     if (file == NULL) { // Check if file opening was successful
         printf("Error opening file for writing!\n");
         exit(1);
+    } else {
+        fprintf(file, "%s,%s,%s,%s,%s,%s\n", entry->title, entry->author, entry->duration, entry->genre, entry->comments, entry->link);
+        printf("Submission Saved!\n\n");
     }
-    // Write entry details to the file
-    fprintf(file, "%s,%s,%s,%s,%s,%s\n", entry->title, entry->author, entry->duration,
-            entry->genre, entry->comments, entry->link);
-
     fclose(file);
+    numEntries++;
 }
 
 
@@ -115,7 +120,7 @@ void saveNewEntry(MovieEntry *entry, DatabaseManager *dbManager) {
 void loadEntries(MovieEntry *entries, int *numEntries, DatabaseManager *dbManager){ 
     FILE *file = fopen(dbManager->filename,"r"); //open the file in reading mode
     if (file == NULL){ // check if it worked
-        printf("error opening file for reading!\n");
+        printf("Error opening file for reading!\n");
         exit(1);
     }
 
