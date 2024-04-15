@@ -3,7 +3,8 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define MAX_CHAR 100
+// These are preprocessor directives defining constants
+#define MAX_CHAR 100 
 #define MAX_ENTRIES 100
 
 // define structure for an entry 
@@ -16,7 +17,7 @@ typedef struct {
     char link[MAX_CHAR];
 } MovieEntry;
 
-// define structure for managing database
+// define structure for managing database. Single field 'filename' which is an array of characters to store the filename
 typedef struct {
     char filename[MAX_CHAR];
 } DatabaseManager;
@@ -37,11 +38,11 @@ int main(){
     printf("Choose mode (save or read)");
     scanf("%s", mode);
 
-    if (strcmp(mode, "save") == 0){
+    if (strcmp(mode, "save") == 0){ // if user chooses save it creaters a databasemanger instance, sets its filename and calls the savenewentry function with the address of the next available entry in the 'entries' array and the address of the dbManager instance
         DatabaseManager dbManager; // instance
         strcpy(dbManager.filename, "Movie_data.csv");
         saveNewEntry(&entries[numEntries], &dbManager); // call function to save new entry
-    } else if (strcmp(mode, "read") == 0){
+    } else if (strcmp(mode, "read") == 0){ // if user chooses read also creates databasemanger instance and calls the load entries function to load existing entries into the entries array and increments numentries. 
         DatabaseManager dbManager;
         strcpy(dbManager.filename, "Movie_data.csv");
         loadEntries(entries, &numEntries, &dbManager); // load existing entries
@@ -114,7 +115,7 @@ void loadEntries(MovieEntry *entries, int *numEntries, DatabaseManager *dbManage
              (*numEntries)++;   // increment the number of entries 
             }
 
-            fclose(file);
+            fclose(file); 
 }
 
 
@@ -138,8 +139,8 @@ void searchEntries(MovieEntry *entries, int numEntries) {
     }
 }
 
-void printEntry(MovieEntry *entry){
-    printf("Title: %s\n", entry->title);
+void printEntry(MovieEntry *entry){  
+    printf("Title: %s\n", entry->title); // entry->title derefrences the pointer 'entry' and accesses the title member of the 'MovieEntry' structure it points to
     printf("Author: %s\n", entry->author);
     printf("Duration: %s\n", entry->duration);
     printf("Comments/Notes: %s\n", entry->comments);
