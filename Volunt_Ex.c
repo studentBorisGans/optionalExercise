@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h> //for tolower function
 
 // These are preprocessor directives defining constants
 #define MAX_CHAR 100 
@@ -28,6 +29,7 @@ void saveNewEntry(MovieEntry *entry, DatabaseManager *dbManager);
 void loadEntries(MovieEntry *entries, int *numEntries, DatabaseManager *dbManager);
 void searchEntries(MovieEntry *entries, int numEntries);
 void printEntry(MovieEntry *entry);
+char* toLowerCase(char *str);
 
 int main(){
     MovieEntry entries[MAX_ENTRIES];
@@ -38,11 +40,12 @@ int main(){
     printf("Choose mode (save or read)");
     scanf("%s", mode);
 
-    if (strcmp(mode, "save") == 0){ // if user chooses save it creaters a databasemanger instance, sets its filename and calls the savenewentry function with the address of the next available entry in the 'entries' array and the address of the dbManager instance
+    
+    if (strcmp(lowerMode, "save") == 0 || strcmp(lowerMode,"s")==0){ // if user chooses save it creaters a databasemanger instance, sets its filename and calls the savenewentry function with the address of the next available entry in the 'entries' array and the address of the dbManager instance
         DatabaseManager dbManager; // instance
         strcpy(dbManager.filename, "Movie_data.csv");
         saveNewEntry(&entries[numEntries], &dbManager); // call function to save new entry
-    } else if (strcmp(mode, "read") == 0){ // if user chooses read also creates databasemanger instance and calls the load entries function to load existing entries into the entries array and increments numentries. 
+    } else if (strcmp(lowerMode, "read") == 0 || strcmp(lowerMode,"r")==0){ // if user chooses read also creates databasemanger instance and calls the load entries function to load existing entries into the entries array and increments numentries. 
         DatabaseManager dbManager;
         strcpy(dbManager.filename, "Movie_data.csv");
         loadEntries(entries, &numEntries, &dbManager); // load existing entries
@@ -54,6 +57,15 @@ int main(){
     return 0; 
     }
 
+char* toLowerCase(char *str) {
+    int length = strlen(str);
+    char *lowerStr = malloc(length + 1); // Allocate memory for the lowercase string
+    for (int i = 0; i < length; i++) {
+        lowerStr[i] = tolower(str[i]); // Convert each character to lowercase
+    }
+    lowerStr[length] = '\0'; // Null-terminate the string
+    return lowerStr;
+}
 
 // This is the function definition for saving a new entry to the data base
 // it takes a pointer to a 'MovieEntry' structure representing the new entry and a pointer to a 'DatabaseManager' structure
