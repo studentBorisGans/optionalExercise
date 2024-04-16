@@ -38,54 +38,64 @@ void printEntry(MovieEntry *entry);
 char* toLowerCase(char *str);
 void editEntries(MovieEntry *entries, int *numEntries, DatabaseManager *dbManager);
 
-int main(){
+int main() {
+  printf("\n█▀▄▀█ █▀█ █░█ █ █▀▀   █▀▄ ▄▀█ ▀█▀ ▄▀█ █▄▄ ▄▀█ █▀ █▀▀   █▀▄▀█ ▄▀█ █▄░█ ▄▀█ █▀▀ █▀▀ █▀█\n");
+    printf("█░▀░█ █▄█ ▀▄▀ █ ██▄   █▄▀ █▀█ ░█░ █▀█ █▄█ █▀█ ▄█ ██▄   █░▀░█ █▀█ █░▀█ █▀█ █▄█ ██▄ █▀▄\n\n");
+
+
     printf("\nWelcome to the Database Manager!\n");
-    // loadEntries Here
     bool invalidOption = true;
     while (invalidOption) {
         MovieEntry entries[MAX_ENTRIES];
         int numEntries = 0;
 
-        char mode[MAX_CHAR]; // variale to store the mode cchosen by the user
+        char mode[MAX_CHAR]; // variable to store the mode chosen by the user
 
-        printf("Choose a mode (save or read) or exit\nPossible options:\nSave, save, S, s\nRead, read, R, r\nExit, exit, E, e\n");
+        printf("\nChoose a mode:\n");
+        printf("Options:\n");
+        printf("  Save: Create or edit entries\n");
+        printf("  Read: View existing entries\n");
+        printf("  Exit: Exit the program\n");
+        printf("Your choice: ");
         scanf("%s", mode);
 
         char* lowerMode = toLowerCase(mode);
     
-        if (strcmp(lowerMode, "save") == 0 || strcmp(lowerMode,"s")==0){ // if user chooses save it creaters a databasemanger instance, sets its filename and calls the savenewentry function with the address of the next available entry in the 'entries' array and the address of the dbManager instance
-            DatabaseManager dbManager; // instance
+        if (strcmp(lowerMode, "save") == 0 || strcmp(lowerMode,"s")==0) { 
+            // Save mode: allows user to create new entries or edit existing ones
+            DatabaseManager dbManager;
             strcpy(dbManager.filename, "Movie_data.csv");
 
             bool invalidOption2 = true;
             while (invalidOption2) {
                 char edit[MAX_CHAR];
-                printf("Would you like to create a new entry, or edit an existing one? Options: \nNew, new, N, n\nEdit, edit, E, e\n");
+                printf("\nWould you like to create a new entry or edit an existing one?\n");
+                printf("Options:\n");
+                printf("  New: Create a new entry\n");
+                printf("  Edit: Edit an existing entry\n");
+                printf("Your choice: ");
                 scanf("%s", edit);
                 if (strcmp(toLowerCase(edit), "new") == 0 || strcmp(toLowerCase(edit), "n") == 0) {
                     invalidOption2 = false;
-                    saveNewEntry(&entries[numEntries], &dbManager, numEntries); // call function to save new entry
+                    saveNewEntry(&entries[numEntries], &dbManager, numEntries);
                 } else if (strcmp(toLowerCase(edit), "edit") == 0 || strcmp(toLowerCase(edit), "e") == 0) {
                     invalidOption2 = false;
                     loadEntries(entries, &numEntries, &dbManager);
                     editEntries(entries, &numEntries, &dbManager);
-                    // new function
                 } else {
-                    printf("Invalid choice! Please look at the possible options are try again.\n\n");
+                    printf("Invalid choice! Please select 'New' or 'Edit'.\n");
                 }
             }
-            
-
-        } else if (strcmp(lowerMode, "read") == 0 || strcmp(lowerMode,"r")==0){ // if user chooses read also creates databasemanger instance and calls the load entries function to load existing entries into the entries array and increments numentries. 
+        } else if (strcmp(lowerMode, "read") == 0 || strcmp(lowerMode,"r")==0) {
+            // Read mode: view existing entries and search
             DatabaseManager dbManager;
             strcpy(dbManager.filename, "Movie_data.csv");
-            // also keep the load here; so if updated between start and read it updates as well
-            loadEntries(entries, &numEntries, &dbManager); // load existing entries
-            searchEntries(entries, numEntries); // call function to search and display entries
+            loadEntries(entries, &numEntries, &dbManager);
+            searchEntries(entries, numEntries);
         } else if (strcmp(lowerMode, "exit") == 0 || strcmp(lowerMode, "e") ==0) {
             invalidOption = false;
         } else {
-            printf("Invalid mode! Please try again :)\n\n");
+            printf("Invalid mode! Please select 'Save', 'Read', or 'Exit'.\n");
         } 
     }
     return 0;
@@ -109,6 +119,7 @@ void editEntries(MovieEntry *entries, int *numEntries, DatabaseManager *dbManage
     int entryToEdit;
     scanf("%d", &entryToEdit);
     if (entryToEdit >= 0 && entryToEdit < *numEntries) {
+        printf("Change the desired fields of this selected entry. If you don't wish to change that specified field, input {}. DO NOT INCLUDE COMMAS INTO AN ENTRY\n");
         MovieEntry *entry = &entries[entryToEdit];
         printf("Previous title: %s\n", entries[entryToEdit].title);
         scanf(" %[^\n]s", entry -> title);
