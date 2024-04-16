@@ -112,19 +112,35 @@ void editEntries(MovieEntry *entries, int *numEntries, DatabaseManager *dbManage
         MovieEntry *entry = &entries[entryToEdit];
         printf("Previous title: %s\n", entries[entryToEdit].title);
         scanf(" %[^\n]s", entry -> title);
+        printf("Previous author: %s\n", entries[entryToEdit].author);
+        scanf(" %[^\n]s", entry -> author);
+        printf("Previous duration: %s\n", entries[entryToEdit].duration);
+        scanf(" %[^\n]s", entry -> duration);
+        printf("Previous genre: %s\n", entries[entryToEdit].genre);
+        scanf(" %[^\n]s", entry -> genre);
+        printf("Previous comments: %s\n", entries[entryToEdit].comments);
+        scanf(" %[^\n]s", entry -> comments);
+        printf("Previous link: %s\n", entries[entryToEdit].link);
+        scanf(" %[^\n]s", entry -> link);
     } else {
         printf("\nInvalid input, please try again.\n\n");
     }
     // printf("Number of entries: %d", *numEntries);
     printf("Changed: %s", entries[entryToEdit].title);
 
-    FILE *file = fopen(dbManager->filename, "a"); // Open the file in append mode
+    
+
+    FILE *file = fopen(dbManager->filename, "w"); // Open the file in write mode, which delets all contents
     if (file == NULL) { // Check if file opening was successful
         printf("Error opening file for writing!\n");
         exit(1);
     } else {
-        // fprintf(file, "%s,%s,%s,%s,%s,%s\n", entry->title, entry->author, entry->duration, entry->genre, entry->comments, entry->link);
-        
+        // append entire structure
+        for (int i = 0; i < *numEntries; i++) {
+            MovieEntry *entry = &entries[i];
+            fprintf(file, "%s,%s,%s,%s,%s,%s\n", entry->title, entry->author, entry->duration, entry->genre, entry->comments, entry->link);
+        }
+
         printf("Submission Saved!\n\n");
     }
     fclose(file);

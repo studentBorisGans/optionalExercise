@@ -2,13 +2,13 @@
 triple:          'arm64-apple-darwin'
 binary-path:     '/Users/borisgans/vsProjects/introProgramming/optionalExercise-1/Volunt_Ex'
 relocations:
-  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _clearInputBuffer, symObjAddr: 0x0, symBinAddr: 0x100002DDC, symSize: 0x60 }
-  - { offsetInCU: 0x42, offset: 0x42, size: 0x8, addend: 0x0, symName: _clearInputBuffer, symObjAddr: 0x0, symBinAddr: 0x100002DDC, symSize: 0x60 }
-  - { offsetInCU: 0x66, offset: 0x66, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x60, symBinAddr: 0x100002E3C, symSize: 0x34C }
-  - { offsetInCU: 0x13F, offset: 0x13F, size: 0x8, addend: 0x0, symName: _toLowerCase, symObjAddr: 0x3AC, symBinAddr: 0x100003188, symSize: 0xA8 }
-  - { offsetInCU: 0x19F, offset: 0x19F, size: 0x8, addend: 0x0, symName: _saveNewEntry, symObjAddr: 0x454, symBinAddr: 0x100003230, symSize: 0x1D0 }
-  - { offsetInCU: 0x1ED, offset: 0x1ED, size: 0x8, addend: 0x0, symName: _loadEntries, symObjAddr: 0x624, symBinAddr: 0x100003400, symSize: 0x178 }
-  - { offsetInCU: 0x23B, offset: 0x23B, size: 0x8, addend: 0x0, symName: _editEntries, symObjAddr: 0x79C, symBinAddr: 0x100003578, symSize: 0x1C8 }
-  - { offsetInCU: 0x2CF, offset: 0x2CF, size: 0x8, addend: 0x0, symName: _searchEntries, symObjAddr: 0x964, symBinAddr: 0x100003740, symSize: 0x2A4 }
-  - { offsetInCU: 0x367, offset: 0x367, size: 0x8, addend: 0x0, symName: _printEntry, symObjAddr: 0xC08, symBinAddr: 0x1000039E4, symSize: 0xCC }
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _clearInputBuffer, symObjAddr: 0x0, symBinAddr: 0x100002B6C, symSize: 0x60 }
+  - { offsetInCU: 0x42, offset: 0x42, size: 0x8, addend: 0x0, symName: _clearInputBuffer, symObjAddr: 0x0, symBinAddr: 0x100002B6C, symSize: 0x60 }
+  - { offsetInCU: 0x66, offset: 0x66, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x60, symBinAddr: 0x100002BCC, symSize: 0x34C }
+  - { offsetInCU: 0x13F, offset: 0x13F, size: 0x8, addend: 0x0, symName: _toLowerCase, symObjAddr: 0x3AC, symBinAddr: 0x100002F18, symSize: 0xA8 }
+  - { offsetInCU: 0x19F, offset: 0x19F, size: 0x8, addend: 0x0, symName: _saveNewEntry, symObjAddr: 0x454, symBinAddr: 0x100002FC0, symSize: 0x1D0 }
+  - { offsetInCU: 0x1ED, offset: 0x1ED, size: 0x8, addend: 0x0, symName: _loadEntries, symObjAddr: 0x624, symBinAddr: 0x100003190, symSize: 0x178 }
+  - { offsetInCU: 0x23B, offset: 0x23B, size: 0x8, addend: 0x0, symName: _editEntries, symObjAddr: 0x79C, symBinAddr: 0x100003308, symSize: 0x3CC }
+  - { offsetInCU: 0x308, offset: 0x308, size: 0x8, addend: 0x0, symName: _searchEntries, symObjAddr: 0xB68, symBinAddr: 0x1000036D4, symSize: 0x2A4 }
+  - { offsetInCU: 0x3A0, offset: 0x3A0, size: 0x8, addend: 0x0, symName: _printEntry, symObjAddr: 0xE0C, symBinAddr: 0x100003978, symSize: 0xCC }
 ...
