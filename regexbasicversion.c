@@ -157,12 +157,13 @@ void searchEntries(MovieEntry *entries, int numEntries) {
     clearInputBuffer();
     printf("Enter search criteria: ");
     scanf("%[^\n]s", criteria);
-
     printf("search results: \n");
+
+    char* lowerCriteria = toLowerCase(criteria);
     
     regex_t regex;
     int reti;
-    reti = regcomp(&regex, criteria, 0);
+    reti = regcomp(&regex, lowerCriteria, 0);
     if (reti) {
         printf("Could not compile regex\n");
         return;
@@ -174,11 +175,11 @@ void searchEntries(MovieEntry *entries, int numEntries) {
         // check if the search criteria matches any part using the regex function regexec
         // if any match is found in the title, author, genre, comments or links,
         // it proceeds to print the entry
-        if ((regexec(&regex, entries[i].title, 0, NULL, 0) == 0) ||
-            (regexec(&regex, entries[i].author, 0, NULL, 0) == 0) ||
-            (regexec(&regex, entries[i].genre, 0, NULL, 0) == 0) ||
-            (regexec(&regex, entries[i].comments, 0, NULL, 0) == 0) ||
-            (regexec(&regex, entries[i].link, 0, NULL, 0) == 0)) {
+        if ((regexec(&regex, toLowerCase(entries[i].title), 0, NULL, 0) == 0) ||
+            (regexec(&regex, toLowerCase(entries[i].author), 0, NULL, 0) == 0) ||
+            (regexec(&regex, toLowerCase(entries[i].genre), 0, NULL, 0) == 0) ||
+            (regexec(&regex, toLowerCase(entries[i].comments), 0, NULL, 0) == 0) ||
+            (regexec(&regex, toLowerCase(entries[i].link), 0, NULL, 0) == 0)) {
             printEntry(&entries[i]); // function to print the details of the matching entry. it passes the address of the current entry '&entries[i]' as an argument to the function
             found = true; // Set found to true if any match is found
         }
