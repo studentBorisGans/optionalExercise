@@ -112,30 +112,79 @@ char* toLowerCase(char *str) { // 'char*' returns a pointer to a character which
 }
 
 void editEntries(MovieEntry *entries, int *numEntries, DatabaseManager *dbManager) {
-    printf("These are the titles of the entries you have already entered, please input the corresponding entry number to edit.\n");
-    for (int i = 0; i < *numEntries; i++) {
-        printf("   %d: %s\n", i, entries[i].title);
-    }
-    int entryToEdit;
-    scanf("%d", &entryToEdit);
-    if (entryToEdit >= 0 && entryToEdit < *numEntries) {
-        MovieEntry *entry = &entries[entryToEdit];
-        printf("Previous title: %s\n", entries[entryToEdit].title);
-        scanf(" %[^\n]s", entry -> title);
-    } else {
-        printf("\nInvalid input, please try again.\n\n");
-    }
-    // printf("Number of entries: %d", *numEntries);
-    printf("Changed: %s", entries[entryToEdit].title);
+    bool cont = true;
+    while (cont) {
+        
+        printf("These are the titles of the entries you have already entered, please input the corresponding entry number to edit.\n");
+        for (int i = 0; i < *numEntries; i++) {
+            printf("   %d: %s\n", i, entries[i].title);
+        }
+        printf("   %d: Exit edit menu\n", *numEntries);
 
-    FILE *file = fopen(dbManager->filename, "a"); // Open the file in append mode
+        int entryToEdit;
+        scanf("%d", &entryToEdit);
+        if (entryToEdit == *numEntries) {
+            cont = false;
+        } else if (entryToEdit >= 0 && entryToEdit < *numEntries) {
+            char dummyVar[MAX_CHAR];
+            printf("Change the desired fields of this selected entry. If you don't wish to change that specified field, input {}. DO NOT INCLUDE COMMAS INTO AN ENTRY\n");
+            MovieEntry *entry = &entries[entryToEdit];
+            printf("\nPrevious title: %s\n", entries[entryToEdit].title);
+            printf("New title: ");
+            scanf(" %[^\n]s", dummyVar);
+            if (strcmp(dummyVar, "{}")) {
+                strcpy(entry->title, dummyVar);
+            }
+            printf("\nPrevious author: %s\n", entries[entryToEdit].author);
+            printf("New author: ");
+            scanf(" %[^\n]s", dummyVar);
+            if (strcmp(dummyVar, "{}")) {
+                strcpy(entry->author, dummyVar);
+            }
+            printf("\nPrevious duration: %s\n", entries[entryToEdit].duration);
+            printf("New duration: ");
+            scanf(" %[^\n]s", dummyVar);
+            if (strcmp(dummyVar, "{}")) {
+                strcpy(entry->duration, dummyVar);
+            }
+            printf("\nPrevious genre: %s\n", entries[entryToEdit].genre);
+            printf("New genre: ");
+            scanf(" %[^\n]s", dummyVar);
+            if (strcmp(dummyVar, "{}")) {
+                strcpy(entry->genre, dummyVar);
+            }
+            printf("\nPrevious comments: %s\n", entries[entryToEdit].comments);
+            printf("New comments: ");
+            scanf(" %[^\n]s", dummyVar);
+            if (strcmp(dummyVar, "{}")) {
+                strcpy(entry->comments, dummyVar);
+            }
+            printf("\nPrevious link: %s\n", entries[entryToEdit].link);
+            printf("New link: ");
+            scanf(" %[^\n]s", entry -> link);
+            if (strcmp(dummyVar, "{}")) {
+                strcpy(entry->link, dummyVar);
+            }
+            printf("Submission Saved!\n\n");
+        } else {
+            printf("\nInvalid input, please try again.\n\n");
+        }
+    }
+    
+    
+    // printf("Number of entries: %d", *numEntries);
+    // printf("Changed: %s", entries[entryToEdit].title);
+
+    FILE *file = fopen(dbManager->filename, "w"); // Open the file in write mode, which delets all contents
     if (file == NULL) { // Check if file opening was successful
         printf("Error opening file for writing!\n");
         exit(1);
     } else {
-        // fprintf(file, "%s,%s,%s,%s,%s,%s\n", entry->title, entry->author, entry->duration, entry->genre, entry->comments, entry->link);
-        
-        printf("Submission Saved!\n\n");
+        // append entire structure
+        for (int i = 0; i < *numEntries; i++) {
+            MovieEntry *entry = &entries[i];
+            fprintf(file, "%s,%s,%s,%s,%s,%s\n", entry->title, entry->author, entry->duration, entry->genre, entry->comments, entry->link);
+        }
     }
     fclose(file);
 
