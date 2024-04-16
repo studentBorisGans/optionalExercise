@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h> //for tolower function
+#include <regex.h> //for regex
 
 // These are preprocessor directives defining constants
 #define MAX_CHAR 100 
@@ -23,8 +24,13 @@ typedef struct {
     char filename[MAX_CHAR];
 } DatabaseManager;
 
+void clearInputBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
 
 //function prototypes
+void clearInputBuffer();
 void saveNewEntry(MovieEntry *entry, DatabaseManager *dbManager, int numEntries);
 void loadEntries(MovieEntry *entries, int *numEntries, DatabaseManager *dbManager);
 void searchEntries(MovieEntry *entries, int numEntries);
@@ -56,10 +62,10 @@ int main(){
                 char edit[MAX_CHAR];
                 printf("Would you like to create a new entry, or edit an existing one? Options: \nNew, new, N, n\nEdit, edit, E, e\n");
                 scanf("%s", edit);
-                if (strcmp(toLowerCase(edit), "new") == 0 || strcmp(toLowerCase(edit), "n")) {
+                if (strcmp(toLowerCase(edit), "new") == 0 || strcmp(toLowerCase(edit), "n") == 0) {
                     invalidOption2 = false;
                     saveNewEntry(&entries[numEntries], &dbManager, numEntries); // call function to save new entry
-                } else if (strcmp(toLowerCase(edit), "edit") == 0 || strcmp(toLowerCase(edit), "e")) {
+                } else if (strcmp(toLowerCase(edit), "edit") == 0 || strcmp(toLowerCase(edit), "e") == 0) {
                     invalidOption2 = false;
                     loadEntries(entries, &numEntries, &dbManager);
                     editEntries(entries, &numEntries, &dbManager);
@@ -97,6 +103,32 @@ char* toLowerCase(char *str) { // 'char*' returns a pointer to a character which
 
 void editEntries(MovieEntry *entries, int *numEntries, DatabaseManager *dbManager) {
     printf("These are the titles of the entries you have already entered, please input the corresponding entry number to edit.\n");
+    for (int i = 0; i < *numEntries; i++) {
+        printf("   %d: %s\n", i, entries[i].title);
+    }
+    int entryToEdit;
+    scanf("%d", &entryToEdit);
+    if (entryToEdit >= 0 && entryToEdit < *numEntries) {
+        MovieEntry *entry = &entries[entryToEdit];
+        printf("Previous title: %s\n", entries[entryToEdit].title);
+        scanf(" %[^\n]s", entry -> title);
+    } else {
+        printf("\nInvalid input, please try again.\n\n");
+    }
+    // printf("Number of entries: %d", *numEntries);
+    printf("Changed: %s", entries[entryToEdit].title);
+
+    FILE *file = fopen(dbManager->filename, "a"); // Open the file in append mode
+    if (file == NULL) { // Check if file opening was successful
+        printf("Error opening file for writing!\n");
+        exit(1);
+    } else {
+        // fprintf(file, "%s,%s,%s,%s,%s,%s\n", entry->title, entry->author, entry->duration, entry->genre, entry->comments, entry->link);
+        
+        printf("Submission Saved!\n\n");
+    }
+    fclose(file);
+
 }
 
 // This is the function definition for saving a new entry to the data base
@@ -165,30 +197,52 @@ void loadEntries(MovieEntry *entries, int *numEntries, DatabaseManager *dbManage
 // it takes an array of 'MovieEntry' structyres and an integer representing the number of entries
 void searchEntries(MovieEntry *entries, int numEntries) {
     char criteria[MAX_CHAR]; // variable to store the search criteria
+    clearInputBuffer();
     printf("Enter search criteria: ");
-    scanf("%s", criteria);
+    scanf("%[^\n]s", criteria);
+    printf("search results: \n");
 
-    printf("Search results: \n");
+    char* lowerCriteria = toLowerCase(criteria);
+    
+    regex_t regex;
+    int reti;
+    reti = regcomp(&regex, lowerCriteria, 0);
+    if (reti) {
+        printf("Could not compile regex\n");
+        return;
+    }
+
+    bool found = false; // Variable to track if any matching entry is found
+
     for (int i = 0; i < numEntries; i++) { // loop through each entry in the 'entries' array
-        // check if the search criteria matches any part using the strstr function
+        // check if the search criteria matches any part using the regex function regexec
         // if any match is found in the title, author, genre, comments or links,
         // it proceeds to print the entry
-        if (strstr(entries[i].title, criteria) != NULL || strstr(entries[i].author, criteria) != NULL ||
-            strstr(entries[i].genre, criteria) != NULL || strstr(entries[i].comments, criteria) != NULL ||
-            strstr(entries[i].link, criteria) != NULL) {
+        if ((regexec(&regex, toLowerCase(entries[i].title), 0, NULL, 0) == 0) ||
+            (regexec(&regex, toLowerCase(entries[i].author), 0, NULL, 0) == 0) ||
+            (regexec(&regex, toLowerCase(entries[i].genre), 0, NULL, 0) == 0) ||
+            (regexec(&regex, toLowerCase(entries[i].comments), 0, NULL, 0) == 0) ||
+            (regexec(&regex, toLowerCase(entries[i].link), 0, NULL, 0) == 0)) {
             printEntry(&entries[i]); // function to print the details of the matching entry. it passes the address of the current entry '&entries[i]' as an argument to the function
+            found = true; // Set found to true if any match is found
         }
     }
+
+    if (!found) {
+        printf("No matching entry found.\n");
+    }
+
+    regfree(&regex);
 }
 
-void printEntry(MovieEntry *entry){  
-    printf("Title: %s\n", entry->title); // entry->title derefrences the pointer 'entry' and accesses the title member of the 'MovieEntry' structure it points to
+void printEntry(MovieEntry *entry) {  
+    printf("Title: %s\n", entry->title);
     printf("Author: %s\n", entry->author);
     printf("Duration: %s\n", entry->duration);
+    printf("Genre: %s\n", entry->genre);
     printf("Comments/Notes: %s\n", entry->comments);
-    printf("link: %s\n", entry->link);
+    printf("Link: %s\n", entry->link);
     printf("\n");
-
 }
 
 
