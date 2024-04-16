@@ -25,16 +25,18 @@ typedef struct {
 
 
 //function prototypes
-void saveNewEntry(MovieEntry *entry, DatabaseManager *dbManager);
+void saveNewEntry(MovieEntry *entry, DatabaseManager *dbManager, int numEntries);
 void loadEntries(MovieEntry *entries, int *numEntries, DatabaseManager *dbManager);
 void searchEntries(MovieEntry *entries, int numEntries);
 void printEntry(MovieEntry *entry);
 char* toLowerCase(char *str);
+void editEntries(MovieEntry *entries, int *numEntries, DatabaseManager *dbManager);
 
 int main(){
     printf("\nWelcome to the Database Manager!\n");
-    bool cont = true;
-    while (cont) {
+    // loadEntries Here
+    bool invalidOption = true;
+    while (invalidOption) {
         MovieEntry entries[MAX_ENTRIES];
         int numEntries = 0;
 
@@ -48,14 +50,34 @@ int main(){
         if (strcmp(lowerMode, "save") == 0 || strcmp(lowerMode,"s")==0){ // if user chooses save it creaters a databasemanger instance, sets its filename and calls the savenewentry function with the address of the next available entry in the 'entries' array and the address of the dbManager instance
             DatabaseManager dbManager; // instance
             strcpy(dbManager.filename, "Movie_data.csv");
-            saveNewEntry(&entries[numEntries], &dbManager, numEntries); // call function to save new entry
+
+            bool invalidOption2 = true;
+            while (invalidOption2) {
+                char edit[MAX_CHAR];
+                printf("Would you like to create a new entry, or edit an existing one? Options: \nNew, new, N, n\nEdit, edit, E, e\n");
+                scanf("%s", edit);
+                if (strcmp(toLowerCase(edit), "new") == 0 || strcmp(toLowerCase(edit), "n")) {
+                    invalidOption2 = false;
+                    saveNewEntry(&entries[numEntries], &dbManager, numEntries); // call function to save new entry
+                } else if (strcmp(toLowerCase(edit), "edit") == 0 || strcmp(toLowerCase(edit), "e")) {
+                    invalidOption2 = false;
+                    loadEntries(entries, &numEntries, &dbManager);
+                    editEntries(entries, &numEntries, &dbManager);
+                    // new function
+                } else {
+                    printf("Invalid choice! Please look at the possible options are try again.\n\n");
+                }
+            }
+            
+
         } else if (strcmp(lowerMode, "read") == 0 || strcmp(lowerMode,"r")==0){ // if user chooses read also creates databasemanger instance and calls the load entries function to load existing entries into the entries array and increments numentries. 
             DatabaseManager dbManager;
             strcpy(dbManager.filename, "Movie_data.csv");
+            // also keep the load here; so if updated between start and read it updates as well
             loadEntries(entries, &numEntries, &dbManager); // load existing entries
             searchEntries(entries, numEntries); // call function to search and display entries
         } else if (strcmp(lowerMode, "exit") == 0 || strcmp(lowerMode, "e") ==0) {
-            cont = false;
+            invalidOption = false;
         } else {
             printf("Invalid mode! Please try again :)\n\n");
         } 
@@ -71,6 +93,10 @@ char* toLowerCase(char *str) { // 'char*' returns a pointer to a character which
     }
     lowerStr[length] = '\0'; // Null-terminate the string . signifies end of the string
     return lowerStr;
+}
+
+void editEntries(MovieEntry *entries, int *numEntries, DatabaseManager *dbManager) {
+    printf("These are the titles of the entries you have already entered, please input the corresponding entry number to edit.\n");
 }
 
 // This is the function definition for saving a new entry to the data base
@@ -114,6 +140,7 @@ void saveNewEntry(MovieEntry *entry, DatabaseManager *dbManager, int numEntries)
 
 
 
+
 // function definition for loading entries 
 // takes an array of 'MovieEntry' structures, a pointer to an integer representing number of entries
 // and a pointer to a 'database manager' structure
@@ -123,17 +150,14 @@ void loadEntries(MovieEntry *entries, int *numEntries, DatabaseManager *dbManage
         printf("Error opening file for reading!\n");
         exit(1);
     }
-
+    
 // while loop that continues as long as the number of entries is less than the maximum allowed
 // scanf function reads all six fields from the file
     while ((*numEntries < MAX_ENTRIES) && 
-    (fscanf(file, "%99[^,],%99[^,],%99[^,],%99[^,],%99[^,],%99[^\n]\n", entries[*numEntries].title,
-            entries[*numEntries].author, entries[*numEntries].duration, entries[*numEntries].genre,
-            entries[*numEntries].comments, entries[*numEntries].link) == 6)){
-             (*numEntries)++;   // increment the number of entries 
-            }
-
-            fclose(file); 
+    (fscanf(file, "%99[^,],%99[^,],%99[^,],%99[^,],%99[^,],%99[^\n]\n", entries[*numEntries].title, entries[*numEntries].author, entries[*numEntries].duration, entries[*numEntries].genre, entries[*numEntries].comments, entries[*numEntries].link) == 6)) {
+        (*numEntries)++;   // increment the number of entries 
+    }
+    fclose(file); 
 }
 
 
@@ -144,7 +168,7 @@ void searchEntries(MovieEntry *entries, int numEntries) {
     printf("Enter search criteria: ");
     scanf("%s", criteria);
 
-    printf("search results: \n");
+    printf("Search results: \n");
     for (int i = 0; i < numEntries; i++) { // loop through each entry in the 'entries' array
         // check if the search criteria matches any part using the strstr function
         // if any match is found in the title, author, genre, comments or links,
@@ -166,3 +190,6 @@ void printEntry(MovieEntry *entry){
     printf("\n");
 
 }
+
+
+// can't search up more than one word; if we leave that we have to clear buffer cause it takes the other word as input for the next scanf
