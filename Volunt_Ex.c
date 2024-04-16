@@ -206,12 +206,12 @@ void loadEntries(MovieEntry *entries, int *numEntries, DatabaseManager *dbManage
 //this is the function definitoin for searching entries in the data base
 // it takes an array of 'MovieEntry' structyres and an integer representing the number of entries
 void searchEntries(MovieEntry *entries, int numEntries) {
-    char criteria[MAX_CHAR]; // variable to store the search criteria
+    char criteria[MAX_CHAR]; 
     char mode;
     bool loop = true;
     clearInputBuffer();
     printf("Enter search criteria: ");
-    scanf("%[^\n]", criteria); // No need for 's' in the format specifier
+    scanf("%[^\n]", criteria); 
 
     char* lowerCriteria = toLowerCase(criteria);
     
@@ -223,24 +223,22 @@ void searchEntries(MovieEntry *entries, int numEntries) {
         return;
     }
 
-    bool found = false; // Variable to track if any matching entry is found
+    bool found = false; 
 
-    for (int i = 0; i < numEntries; i++) { // loop through each entry in the 'entries' array
-        // check if the search criteria matches any part using the regex function regexec
-        // if any match is found in the title, author, genre, comments or links,
-        // it proceeds to print the entry
+    for (int i = 0; i < numEntries; i++) { 
+
         if ((regexec(&regex, toLowerCase(entries[i].title), 0, NULL, 0) == 0) ||
             (regexec(&regex, toLowerCase(entries[i].author), 0, NULL, 0) == 0) ||
             (regexec(&regex, toLowerCase(entries[i].genre), 0, NULL, 0) == 0) ||
             (regexec(&regex, toLowerCase(entries[i].comments), 0, NULL, 0) == 0) ||
             (regexec(&regex, toLowerCase(entries[i].link), 0, NULL, 0) == 0)) {
 
-            // Clearing input buffer before entering the loop
+
             clearInputBuffer();
 
             while (loop) {
                 printf("Which criteria would you like to view?\na: title\nb: director\nc: genre\nd: comments\nf: all entries\ng: exit\n");
-                scanf(" %c", &mode); // Add space before %c to consume leading whitespace
+                scanf(" %c", &mode); 
 
                 switch (mode) {
                     case 'a':
@@ -269,7 +267,7 @@ void searchEntries(MovieEntry *entries, int numEntries) {
                         break;
                 }
             }
-            found = true; // Set found to true if any match is found
+            found = true; 
         }
     }
 
