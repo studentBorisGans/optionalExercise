@@ -112,9 +112,10 @@ char* toLowerCase(char *str) { // 'char*' returns a pointer to a character which
 }
 
 void editEntries(MovieEntry *entries, int *numEntries, DatabaseManager *dbManager) {
+    // Looping through the edit menu so the user can edit more than once
     bool cont = true;
     while (cont) {
-        
+        // listing all of the titles of the entries so the user can select one to edit; also gives them the exit menu option
         printf("These are the titles of the entries you have already entered, please input the corresponding entry number to edit.\n");
         for (int i = 0; i < *numEntries; i++) {
             printf("   %d: %s\n", i, entries[i].title);
@@ -124,16 +125,16 @@ void editEntries(MovieEntry *entries, int *numEntries, DatabaseManager *dbManage
         int entryToEdit;
         scanf("%d", &entryToEdit);
         if (entryToEdit == *numEntries) {
-            cont = false;
+            cont = false; //if they selected the last element, exit the editing menu
         } else if (entryToEdit >= 0 && entryToEdit < *numEntries) {
-            char dummyVar[MAX_CHAR];
+            char dummyVar[MAX_CHAR]; //variable I use to see if the scanf input is equal to {}, which would mean that they don't want to change anything for that field
             printf("Change the desired fields of this selected entry. If you don't wish to change that specified field, input {}. DO NOT INCLUDE COMMAS INTO AN ENTRY\n");
             MovieEntry *entry = &entries[entryToEdit];
             printf("\nPrevious title: %s\n", entries[entryToEdit].title);
             printf("New title: ");
             scanf(" %[^\n]s", dummyVar);
             if (strcmp(dummyVar, "{}")) {
-                strcpy(entry->title, dummyVar);
+                strcpy(entry->title, dummyVar); //copies dummyVar into that field for that entry in the structure; I repeat this process for all fields
             }
             printf("\nPrevious author: %s\n", entries[entryToEdit].author);
             printf("New author: ");
@@ -167,27 +168,22 @@ void editEntries(MovieEntry *entries, int *numEntries, DatabaseManager *dbManage
             }
             printf("Submission Saved!\n\n");
         } else {
-            printf("\nInvalid input, please try again.\n\n");
+            printf("\nInvalid input, please try again.\n\n"); //if the user inputs anything other than the numbers between 0 and numEntries (inclusive) then re-prompt the menu
         }
-    }
-    
-    
-    // printf("Number of entries: %d", *numEntries);
-    // printf("Changed: %s", entries[entryToEdit].title);
+    } // I close the while loop here so that it only edits the file once the user is completley done editing
 
-    FILE *file = fopen(dbManager->filename, "w"); // Open the file in write mode, which delets all contents
+    FILE *file = fopen(dbManager->filename, "w"); // Open the file in write mode, which delets all of the contents
     if (file == NULL) { // Check if file opening was successful
         printf("Error opening file for writing!\n");
         exit(1);
     } else {
-        // append entire structure
+        // append the entire structure for all entries
         for (int i = 0; i < *numEntries; i++) {
             MovieEntry *entry = &entries[i];
             fprintf(file, "%s,%s,%s,%s,%s,%s\n", entry->title, entry->author, entry->duration, entry->genre, entry->comments, entry->link);
         }
     }
     fclose(file);
-
 }
 
 // This is the function definition for saving a new entry to the data base
@@ -319,14 +315,11 @@ void searchEntries(MovieEntry *entries, int numEntries) {
             found = true; 
         }
     }
-
     if (!found) {
         printf("No matching entry found.\n");
     }
-
     regfree(&regex);
 }
-
 
 void printEntry(MovieEntry *entry) {  
     printf("Title: %s\n", entry->title);
