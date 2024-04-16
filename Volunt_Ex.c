@@ -207,10 +207,11 @@ void loadEntries(MovieEntry *entries, int *numEntries, DatabaseManager *dbManage
 // it takes an array of 'MovieEntry' structyres and an integer representing the number of entries
 void searchEntries(MovieEntry *entries, int numEntries) {
     char criteria[MAX_CHAR]; // variable to store the search criteria
+    char mode;
+    bool loop = true;
     clearInputBuffer();
     printf("Enter search criteria: ");
-    scanf("%[^\n]s", criteria);
-    printf("search results: \n");
+    scanf("%[^\n]", criteria); // No need for 's' in the format specifier
 
     char* lowerCriteria = toLowerCase(criteria);
     
@@ -233,7 +234,41 @@ void searchEntries(MovieEntry *entries, int numEntries) {
             (regexec(&regex, toLowerCase(entries[i].genre), 0, NULL, 0) == 0) ||
             (regexec(&regex, toLowerCase(entries[i].comments), 0, NULL, 0) == 0) ||
             (regexec(&regex, toLowerCase(entries[i].link), 0, NULL, 0) == 0)) {
-            printEntry(&entries[i]); // function to print the details of the matching entry. it passes the address of the current entry '&entries[i]' as an argument to the function
+
+            // Clearing input buffer before entering the loop
+            clearInputBuffer();
+
+            while (loop) {
+                printf("Which criteria would you like to view?\na: title\nb: director\nc: genre\nd: comments\nf: all entries\ng: exit\n");
+                scanf(" %c", &mode); // Add space before %c to consume leading whitespace
+
+                switch (mode) {
+                    case 'a':
+                        printf("Title: %s\n", entries[i].title);
+                        break;
+                    case 'b':
+                        printf("Author: %s\n", entries[i].author);
+                        break;
+                    case 'c':
+                        printf("Genre: %s\n", entries[i].genre);
+                        break;
+                    case 'd':
+                        printf("Comments: %s\n", entries[i].comments);
+                        break;
+                    case 'e':
+                        printf("Link: %s\n", entries[i].link);
+                        break;
+                    case 'f':
+                        printEntry(&entries[i]);
+                        break;
+                    case 'g':
+                        loop = false; // Exit the loop when 'g' is entered
+                        break;
+                    default:
+                        printf("Not an option!\n");
+                        break;
+                }
+            }
             found = true; // Set found to true if any match is found
         }
     }
@@ -245,6 +280,7 @@ void searchEntries(MovieEntry *entries, int numEntries) {
     regfree(&regex);
 }
 
+
 void printEntry(MovieEntry *entry) {  
     printf("Title: %s\n", entry->title);
     printf("Author: %s\n", entry->author);
@@ -254,6 +290,3 @@ void printEntry(MovieEntry *entry) {
     printf("Link: %s\n", entry->link);
     printf("\n");
 }
-
-
-// can't search up more than one word; if we leave that we have to clear buffer cause it takes the other word as input for the next scanf
